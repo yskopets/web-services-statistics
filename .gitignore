@@ -1,3 +1,14 @@
+# Maven build artifacts
+target/
+
+# IntelliJ artifacts
+.idea/
+*.ipr
+*.iml
+*.iws
+
+# Default Github's boilerplate
+
 *.class
 
 # Mobile Tools for Java (J2ME)

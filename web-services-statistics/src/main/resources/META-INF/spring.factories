@@ -1,0 +1,4 @@
+# Piggyback on standard Spring facilities in order to define a list of PrintWriter subclasses that can be reliably instrumented
+com.github.toolbelt.web.services.statistics.filter.StatisticsCollectingPrintWriter=\
+java.io.PrintWriter
+

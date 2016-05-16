@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.github.toolbelt</groupId>
+        <artifactId>web-services-statistics-build</artifactId>
+        <version>1.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>web-services-statistics-parent</artifactId>
+    <packaging>pom</packaging>
+    <name>Web Services Statistics Parent</name>
+    <description>Web Services Statistics Parent</description>
+    <url>https://github.com/yskopets/web-services-statistics</url>
+    <inceptionYear>2013</inceptionYear>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/yskopets/web-services-statistics</url>
+        <connection>scm:git:git://github.com/yskopets/web-services-statistics.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/yskopets/web-services-statistics.git</developerConnection>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>yskopets</id>
+            <name>Yaroslav Skopets</name>
+            <email>y.skopets@gmail.com</email>
+            <roles>
+                <role>creator</role>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <prerequisites>
+        <!-- Notice: compatibility with Maven 3.0.5 is only necessary to meet corporate standards -->
+        <maven>3.0.5</maven>
+    </prerequisites>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- Versions of plugins -->
+
+        <maven-checkstyle-plugin.version>2.17</maven-checkstyle-plugin.version>
+        <checkstyle.version>6.17</checkstyle.version>
+        <native2ascii-maven-plugin.version>1.0-beta-1</native2ascii-maven-plugin.version>
+        <build-helper-maven-plugin.version>1.7</build-helper-maven-plugin.version>
+        <maven-surefire-plugin.version>2.11</maven-surefire-plugin.version>
+        <gmavenplus-plugin.version>1.5</gmavenplus-plugin.version>
+        <jacoco-maven-plugin.version>0.6.3.201306030806</jacoco-maven-plugin.version>
+
+        <!-- Configuration of 'maven-checkstyle-plugin' -->
+
+        <disable.checks>false</disable.checks>
+
+        <!-- Configuration of 'maven-compiler-plugin' -->
+
+        <maven.compiler.target>1.7</maven.compiler.target>
+        <maven.compiler.source>1.7</maven.compiler.source>
+
+        <!-- Configuration of 'maven-surefire-plugin' -->
+        <argLine>-ea</argLine>
+        <surefire.fork.vmargs>${argLine}</surefire.fork.vmargs>
+        <java.awt.headless>true</java.awt.headless>
+
+        <!-- Versions of dependencies -->
+
+        <jboss-eap.version>6.4.0.GA</jboss-eap.version>
+        <spring-platform.version>2.0.4.RELEASE</spring-platform.version>
+        <spring-insight.version>1.9.1.SR1</spring-insight.version>
+        <cglib.version>3.1</cglib.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- JBoss EAP -->
+
+            <dependency>
+                <groupId>org.jboss.bom.eap</groupId>
+                <artifactId>jboss-javaee-6.0-with-tools</artifactId>
+                <version>${jboss-eap.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Spring Framework -->
+
+            <dependency>
+                <groupId>io.spring.platform</groupId>
+                <artifactId>platform-bom</artifactId>
+                <version>${spring-platform.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Spring Insight Runtime -->
+
+            <dependency>
+                <groupId>com.springsource.insight</groupId>
+                <artifactId>insight-util</artifactId>
+                <version>${spring-insight.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.springsource.insight</groupId>
+                <artifactId>insight-intercept</artifactId>
+                <version>${spring-insight.version}</version>
+            </dependency>
+
+            <!-- Optional dependencies for using Spock -->
+
+            <dependency> <!-- enables mocking of classes (in addition to interfaces) -->
+                <groupId>cglib</groupId>
+                <artifactId>cglib-nodep</artifactId>
+                <version>${cglib.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- Default dependencies for all Maven modules -->
+
+        <!-- Logging -->
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+        <!-- Unit Testing -->
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!--Unit Testing with Spock-->
+
+        <!-- Mandatory dependencies for using Spock -->
+        <dependency>
+            <groupId>org.spockframework</groupId>
+            <artifactId>spock-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency> <!-- enables mocking of classes (in addition to interfaces) -->
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency> <!-- enables mocking of classes without default constructor (together with CGLIB) -->
+            <groupId>org.objenesis</groupId>
+            <artifactId>objenesis</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency> <!-- only required if Hamcrest matchers are used -->
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${maven-checkstyle-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.puppycrawl.tools</groupId>
+                            <artifactId>checkstyle</artifactId>
+                            <version>${checkstyle.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>native2ascii-maven-plugin</artifactId>
+                    <version>${native2ascii-maven-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>${build-helper-maven-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                    <configuration>
+                        <includes>
+                            <!--Default configuration-->
+                            <include>**/*Test.java</include>
+                            <!--Unit Testing with Spock-->
+                            <include>**/*Spec.java</include>
+                        </includes>
+                        <childDelegation>false</childDelegation>
+                        <systemProperties>
+                            <property>
+                                <name>java.awt.headless</name>
+                                <value>${java.awt.headless}</value>
+                            </property>
+                            <property>
+                                <name>surefire.fork.vmargs</name>
+                                <value>${surefire.fork.vmargs}</value>
+                            </property>
+                        </systemProperties>
+                    </configuration>
+                </plugin>
+
+                <!-- Mandatory plugins for using Spock -->
+
+                <plugin>
+                    <!-- The gmavenplus plugin is used to compile Groovy code. To learn more about this plugin,
+                    visit https://github.com/groovy/GMavenPlus/wiki -->
+                    <groupId>org.codehaus.gmavenplus</groupId>
+                    <artifactId>gmavenplus-plugin</artifactId>
+                    <version>${gmavenplus-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco-maven-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <!--
+            Checkstyle configuration borrowed from
+            https://github.com/spring-projects/spring-boot/blob/master/spring-boot-parent/pom.xml
+            -->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>checkstyle-validation</id>
+                        <phase>validate</phase>
+                        <configuration>
+                            <skip>${disable.checks}</skip>
+                            <configLocation>src/checkstyle/checkstyle.xml</configLocation>
+                            <suppressionsLocation>src/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
+                            <propertyExpansion>checkstyle.build.directory=${project.build.directory}</propertyExpansion>
+                            <encoding>UTF-8</encoding>
+                            <consoleOutput>true</consoleOutput>
+                            <failsOnError>true</failsOnError>
+                            <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                        </configuration>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Mandatory plugins for using Spock -->
+
+            <plugin>
+                <!-- The gmavenplus plugin is used to compile Groovy code. To learn more about this plugin,
+                visit https://github.com/groovy/GMavenPlus/wiki -->
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <repositories>
+        <!-- Configure the JBoss GA Maven repository -->
+        <repository>
+            <id>jboss-ga-repository</id>
+            <url>http://maven.repository.redhat.com/techpreview/all</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <!-- Repository with 'Spring Insight' artifacts -->
+        <repository>
+            <id>springsource-milestones</id>
+            <url>http://repo.springsource.org/milestone/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <!-- Configure the JBoss GA Maven repository -->
+        <pluginRepository>
+            <id>jboss-ga-plugin-repository</id>
+            <url>http://maven.repository.redhat.com/techpreview/all</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <profiles>
+        <profile>
+            <!-- See https://github.com/SonarSource/sonar-examples/tree/master/projects/languages/java/code-coverage/combined%20ut-it/combined-ut-it-multimodule-maven-jacoco -->
+            <id>with-sonar-coverage</id>
+            <activation>
+                <property>
+                    <name>it</name>
+                </property>
+            </activation>
+
+            <properties>
+                <coverage.jacoco.destFile>${project.build.directory}/jacoco.exec</coverage.jacoco.destFile>
+                <!--
+                This property should be overwritten by those Maven Modules that have their integration tests
+                put into a separate project.
+                -->
+                <coverage.it.jacoco.destFile>${project.build.directory}/jacoco-it.exec</coverage.it.jacoco.destFile>
+            </properties>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <configuration>
+                            <append>true</append>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>agent-for-ut</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                                <phase>initialize</phase>
+                                <configuration>
+                                    <propertyName>argLine</propertyName>
+                                    <destFile>${coverage.jacoco.destFile}</destFile>
+                                </configuration>
+                            </execution>
+                            <!--
+                            The following configuration reproduces 'prepare-agent-integration' goal
+                            that was introduced in 'JaCoCo' 0.7.x
+                            -->
+                            <execution>
+                                <id>agent-for-it</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                                <phase>pre-integration-test</phase>
+                                <configuration>
+                                    <!-- See http://sourceforge.net/p/eclemma/discussion/614869/thread/8bfd1ab6/ -->
+                                    <propertyName>coverageAgent</propertyName>
+                                    <destFile>${coverage.it.jacoco.destFile}</destFile>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>fast</id>
+            <activation>
+                <property>
+                    <name>fast</name>
+                </property>
+            </activation>
+            <properties>
+                <disable.checks>true</disable.checks>
+            </properties>
+        </profile>
+    </profiles>
+</project>

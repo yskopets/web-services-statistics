@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.github.toolbelt</groupId>
+        <artifactId>web-services-statistics-parent</artifactId>
+        <version>1.1-SNAPSHOT</version>
+        <relativePath>../web-services-statistics-parent</relativePath>
+    </parent>
+
+    <artifactId>web-services-statistics</artifactId>
+    <packaging>jar</packaging>
+    <name>Web Services Statistics</name>
+    <description>Framework for collecting statistical and profiling information on requests served by Web Services</description>
+
+    <dependencies>
+        <!-- Spring Insight Runtime -->
+
+        <dependency>
+            <groupId>com.springsource.insight</groupId>
+            <artifactId>insight-util</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.springsource.insight</groupId>
+            <artifactId>insight-intercept</artifactId>
+        </dependency>
+
+        <!-- Spring Framework -->
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+
+        <!-- Import the Servlet API, we use provided scope as the API is included in JBoss EAP 6 -->
+        <dependency>
+            <groupId>org.jboss.spec.javax.servlet</groupId>
+            <artifactId>jboss-servlet-api_3.0_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Spring Integration -->
+
+        <dependency>
+            <groupId>org.springframework.integration</groupId>
+            <artifactId>spring-integration-core</artifactId>
+        </dependency>
+
+        <!-- Import the Java Mail API, we use provided scope as the API is included in JBoss EAP 6 -->
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Jackson JSON Mapper -->
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-joda</artifactId>
+        </dependency>
+
+        <!-- Common utilities -->
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+
+        <!-- IO utilities -->
+
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+
+        <!-- Dealing with dates -->
+
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+
+        <!-- Logging -->
+
+        <dependency>
+            <!-- 'Log4J' is a corporate standard -->
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <!-- We want to be bridge 'Jakarta Commons Logging API (JCL)', which is used by 'Spring', into 'Log4J' through 'SLF4J' -->
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <!-- We want to be bridge 'Java Util Logging API (JUL)', which is used by JDK itself, into 'Log4J' through 'SLF4J' -->
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Unit Testing -->
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
