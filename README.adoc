@@ -1,0 +1,247 @@
+= Web Services Statistics
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+== What is this thing?
+
+- A lightweight framework for collecting `*statistical*` and `*profiling*` information on requests served by your 
+`*Web Services*`
+- Heavily inspired by the excellent http://spring.io/blog/2009/10/21/introducing-tc-server-developer-edition-with-spring-insight/[Spring Insight] product
+- In fact, we're fundamentally reusing Open Source components of `*Spring Insight*` under the hood
+
+== When would you need it?
+
+*If your application handles requests like this ...*
+
+[source,http]
+----
+GET /api/v2/e-library/books/1234567890123/scan?container_format=application/pdf HTTP/1.1
+Host: books.example.com
+Referer: https://www.google.com/
+User-Agent: Mozilla
+----
+
+*And you want to have statistics like that ...*
+
+[source,json,indent=2]
+----
+{
+  "data": {
+    "FormatVersion": [1, 1],
+    "Request": {
+      "MetaInfo": { // <1>
+        "RequestTime": "2015-04-30T12:42:54.628+02:00",
+        "ClientIPAddress": "1.2.3.4",
+        "UserName": null,
+        "RequestMethod": "GET",
+        "Referer": "https://www.google.com/",
+        "UserAgent": "Mozilla"
+      },
+      "Resource": { // <2>
+        "Type": "CompleteBookScan",
+        "Parameters": {
+          "ISBN": "1234567890123",
+          "ContainerFormat": "application/pdf"
+        }
+      }
+    },
+    "Uid": "5724f1061d917a7db90a589a",
+    "Response": {
+      "MetaInfo": { // <3>
+        "ProcessingNode": "farm-007",
+        "StatusCode": 200,
+        "ContentType": "application/pdf",
+        "ContentLength": 12345
+      },
+      "Metrics": { // <4>
+        "NumberOfPages": 257, // <5>
+        "TimeTillFirstResponseByteMillis": 100,
+        "TotalProcessingTimeMillis": 200,
+        "ResponseBodyWrittenBytesCount": 32,
+        "ResponseBodyWrittenCharsCount": 0
+      },
+      "Trace": { // <6>
+        "rootFrame": {
+          "id": 0,
+          "children": [
+            {
+              "id": 1,
+              "children": [
+                {
+                  "id": 2,
+                  "children": [
+                    {
+                      "id": 3,
+                      "children": [],
+                      "operation": {
+                        "type": "http",
+                        "label": "external-call", // <7>
+                        "properties": {
+                          "arguments": {
+                            "properties": {
+                              "isbn": "1234567890123",
+                              "page_number": 17
+                            }
+                          },
+                          "returnValue": "401"
+                        }
+                      },
+                      "range": {
+                        "start": 40000001,
+                        "end": 50000001,
+                        "durationMillis": 10
+                      }
+                    }
+                  ],
+                  "operation": {
+                    "type": "method",
+                    "label": "controller",
+                    "properties": {
+                      "arguments": {
+                        "items": [
+                          "1234567890123",
+                          17
+                        ]
+                      },
+                      "returnValue": "interim return value"
+                    }
+                  },
+                  "range": {
+                    "start": 30000001,
+                    "end": 60000001,
+                    "durationMillis": 30
+                  }
+                }
+              ],
+              "operation": {
+                "type": "web_request",
+                "label": "restful-web-service-endpoint",
+                "properties": {
+                  "arguments": {
+                    "properties": {
+                      "client_id": "spock",
+                      "api_version": 2
+                    }
+                  },
+                  "returnValue": "void"
+                }
+              },
+              "range": {
+                "start": 20000001,
+                "end": 70000001,
+                "durationMillis": 50
+              }
+            }
+          ],
+          "operation": {
+            "type": "request_statistics_filter",
+            "label": "",
+            "properties": {
+              "returnValue": "void"
+            }
+          },
+          "range": {
+            "start": 10000001,
+            "end": 80000001,
+            "durationMillis": 70
+          }
+        }
+      }
+    }
+  }
+}
+----
+<1> `*Request Meta Info*`
+<2> _Structured Description_ of the requested `*Resource*`
+<3> `*Response Meta Info*`
+<4> `*Response Metrics*` 
+<5> _Business-levels_ `*Response Metrics*`, such as `*Number of Pages*` in a dynamically generated PDF file
+<6> `*Profiling Information*` collected by `*Spring Insight*`
+<7> `*Track*` and `*Timing*` of the _External Calls_ made by your `*Web Service*`
+
+== How much code do you need to write?
+
+Consider the following _Request Processing Scenario_ (written in Groovy):
+
+[source,groovy,indent=0]
+----
+/**
+ * Represents a successful response for the {@code CompleteBookScan} resource.
+ */
+class CompleteBookScanSuccessfulScenario implements RequestProcessingScenario {
+
+    RequestStatisticsCollector statsCollector
+
+    TracingSubsystem tracingSubsystem
+
+    @Override
+    void enact(HttpServletRequest req, HttpServletResponse resp) {
+
+        /**
+         * Stage 1: Describe the requested resource from the business perspective.
+         *
+         * Notice: It is crucial to collect this information
+         * before actual request processing gets the first chance to fail.
+         */
+
+        statsCollector.describeRequest().requestForResource()
+                .ofType(CompleteBookScan)
+                .withParameter(ISBN, '1234567890123')
+                .withParameter(ContainerFormat, 'application/pdf')
+
+        /**
+         * Stage 2: Do actual request processing and trace the flow of execution along the way.
+         *
+         * Notice: application code can either {@code trace} explicitly 
+         * or make use of {@code AOP} machinery for that purpose.
+         */
+
+        // Example of explicit method call {@code tracing} (but only to give you a feel).
+        // Use {@code AOP} to avoid boilerplate code of {@code tracing}.
+        new TracingSupport(tracingSubsystem).with {
+            // tree of interim operations
+            enter(webRequestOperation)
+                enter(methodCallOperation)
+                    enter(httpOperation)
+                    exitNormal(401)
+                exitNormal('interim return value')
+            exitNormal()
+        }
+
+        /**
+         * Stage 3: Stream the generated response back to the client.
+         *
+         * Notice: request processing, response streaming 
+         * and response metrics collection can be intermixed in any order.
+         */
+
+        resp.with {
+            setContentType(PDF as String)
+            // intentionally set 'Content-Length' to a different value 
+            // than the actual response size (to see how well statistics will handle it)
+            setContentLength(12345)
+            outputStream.write('Stub for the actual PDF contents' as byte[])
+        }
+
+        /**
+         * Stage 4: Describe metrics of the generated response from the business perspective.
+         *
+         * Notice: this stage is convenient for metrics that become available 
+         * in the very end of request processing.
+         */
+
+        statsCollector.describeResponse().withMetric(NumberOfPages, 257)
+    }
+}
+----
+
+== Where to go next?
+
+Simply check out our `*Source Code*` and `*Functional Tests*`:
+
+- the library itself is tiny
+- and `*Functional Tests*` are written in `*Groovy*` and `*Spock*` - they're really fun to study and deal with
